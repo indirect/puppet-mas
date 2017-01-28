@@ -1,45 +1,19 @@
 # == Class: mas
 #
-# Just installs the `mas` binary. This is not needed if you install it by hand.
+# Installs the `mas` binary from homebrew and signs in
 #
 class mas (
-  $account  = undef,
-  $password = undef,
-  $secure   = true,
+  $account  = undef
 ) {
-  Exec {
-    path => '/bin:/usr/bin:/usr/local/bin:/opt/puppetlabs/bin:',
-  }
+  require homebrew
 
-  if $::osfamily == 'Darwin' {
-    exec { 'brew install argon/mas/mas':
-      unless => 'mas version',
-      onlyif => 'brew --version',
-    }
+  package { 'mas': provider => "homebrew" }
 
-    if $password {
-      # node_encrypt works in masterless only with additional configuration.
-      if $secure {
-        $secret = node_encrypt($password)
-        exec { 'mas account login':
-          command     => "mas signin ${account} '\$(puppet node decrypt --env SECRET)'",
-          unless      => 'mas account',
-          environment => "SECRET=${secret}",
-          require     => Exec['brew install argon/mas/mas'],
-        }
-        redact('password')
-      }
-      else {
-        exec { 'mas account login':
-          command     => "mas signin ${account} '${password}'",
-          unless      => 'mas account',
-          require     => Exec['brew install argon/mas/mas'],
-        }
-      }
+  if $account {
+    exec { 'mas account login':
+      command     => "mas signin ${account}",
+      unless      => 'mas account',
+      require     => Homebrew['mas'],
     }
   }
-  else {
-    fail('The Mac App Store only runs on OS X machines.')
-  }
-
 }

@@ -92,9 +92,3 @@ to mitigate that issue!
 ## Disclaimer
 
 I take no liability for the use of this module.
-
-Contact
--------
-
-binford2k@gmail.com
-
