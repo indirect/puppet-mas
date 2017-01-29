@@ -4,15 +4,11 @@
 #
 class mas ($account = undef) {
   require homebrew
+  package { 'mas': provider => 'homebrew' }
 
-  # exec { 'brew install mas':
-  #   unless => 'mas version',
-  #   onlyif => 'brew --version',
-  # }
-  #
-  # exec { 'mas account login':
-  #   command     => "mas signin ${account} --gui",
-  #   unless      => 'mas account',
-  #   require     => Homebrew['mas'],
-  # }
+  exec { 'mas account login':
+    command     => "mas signin ${account} --dialog",
+    unless      => 'mas account',
+    require     => Package['mas']
+  }
 }

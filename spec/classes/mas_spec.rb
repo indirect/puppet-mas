@@ -5,5 +5,7 @@ describe 'mas' do
 
   it do
     should contain_class('homebrew')
+    should contain_package('mas')
+    should contain_exec('mas account login')
   end
 end
